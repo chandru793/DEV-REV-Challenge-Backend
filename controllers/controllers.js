@@ -1,4 +1,6 @@
 const Users = require("../model/UserSchema");
+const Books = require("../model/BookSchema");
+const Lend = require("../model/LendSchema");
 const asyncWrapper = require("../middleware/async");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -66,8 +68,52 @@ const decodeUser = asyncWrapper(async (req, res) => {
   }
 });
 
+//get all books
+const getAllBooks = asyncWrapper(async (req, res) => {
+  const books = await Books.find({});
+  res.status(200).json({ books });
+  console.log("Get All Books");
+});
+
+//create book
+const createBook = asyncWrapper(async (req, res) => {
+  const books = await Books.create(req.body);
+  res.status(201).json({ books });
+  console.log("Create Book");
+});
+
+//lend book
+const lendBook = asyncWrapper(async (req, res) => {
+  const details = await Lend.create(req.body);
+  res.status(201).json({ details });
+  console.log("lend book");
+});
+
+//get lend books
+const getLendBooks = asyncWrapper(async (req, res) => {
+  const books = await Lend.find({});
+  res.status(200).json({ books });
+  console.log("Get All Lend Books");
+});
+
+//delete lend books
+const deleteLendBook = asyncWrapper(async (req, res) => {
+  const { id: LendID } = req.params;
+  const LendBook = await Lend.findOneAndDelete({ _id: LendID });
+  if (!LendBook) {
+    return res.status(404).json({ msg: `No task found with id :${LendID}` });
+  }
+  res.status(200).json({ LendBook });
+  console.log("Delete Task");
+});
+
 module.exports = {
   createUser,
   loginUser,
   decodeUser,
+  createBook,
+  getAllBooks,
+  lendBook,
+  getLendBooks,
+  deleteLendBook,
 };
